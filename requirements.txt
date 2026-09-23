@@ -1,1 +1,1 @@
-langchainlangchain-groqlangchain-chromalangchain-huggingfacelanggraphsentence-transformerschromadbstreamlit
+langchainlangchain-communitylangchain-groqlangchain-chromalangchain-huggingfacelanggraphsentence-transformerschromadbstreamlit

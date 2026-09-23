@@ -1,0 +1,47 @@
+name: SAPES Agent CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Descarregar codi del repositori
+      uses: actions/checkout@v4
+
+    - name: Configurar l'entorn de Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Instal·lar dependències
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Executar re-indexació de coneixement (ingest.py)
+      run: |
+        python ingest.py
+
+    - name: Validar resposta de l'Agent amb Groq API
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      run: |
+        python -c "
+        import os
+        from langchain_groq import ChatGroq
+        
+        api_key = os.getenv('GROQ_API_KEY')
+        if not api_key:
+            raise ValueError('GROQ_API_KEY no està configurada a GitHub Secrets!')
+            
+        llm = ChatGroq(model='llama-3.3-70b-versatile', groq_api_key=api_key)
+        res = llm.invoke('Confirma que el sistema CI/CD de SAPES funciona.')
+        print('✅ Test de comunicació amb Groq completat amb èxit:', res.content[:100])
+        "

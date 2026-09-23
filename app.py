@@ -30,18 +30,12 @@ if prompt := st.chat_input("Escriu la teva pregunta..."):
         with st.spinner("L'agent està processant la resposta..."):
             try:
                 # Invocació del graf de LangGraph
-               # Executar l'agent i mostrar la resposta
-    with st.chat_message("assistant"):
-        with st.spinner("L'agent està processant la resposta..."):
-            try:
-                # Invocació del graf de LangGraph
                 inputs = {"messages": [("user", prompt)]}
                 result = app.invoke(inputs)
                 
-                # Extreure l'últim missatge de la llista
+                # Extreure l'últim missatge
                 last_message = result["messages"][-1]
                 
-                # Comprovar si el missatge és un objecte de LangChain o una tupla (role, content)
                 if hasattr(last_message, "content"):
                     response_text = last_message.content
                 elif isinstance(last_message, tuple):
@@ -55,5 +49,3 @@ if prompt := st.chat_input("Escriu la teva pregunta..."):
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
             except Exception as e:
                 st.error(f"S'ha produït un error: {e}")
-                
-               
